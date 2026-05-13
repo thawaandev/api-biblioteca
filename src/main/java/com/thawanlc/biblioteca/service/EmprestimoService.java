@@ -39,6 +39,11 @@ public class EmprestimoService {
         livro.setDisponivel(false);
 
         Emprestimo emprestimo = EmprestimoMapper.toEntity(request);
+
+        if(emprestimo.isCancelado()) {
+            throw new LivroIndisponivelException("Livro indisponível para empréstimo");
+        }
+
         emprestimo.setLivro(livro);
         emprestimoRepository.save(emprestimo);
         livroRepository.save(livro);
@@ -61,6 +66,19 @@ public class EmprestimoService {
         return emprestimoRepository.findAll().stream()
             .map(EmprestimoMapper::toResponse)
             .collect(Collectors.toList());
+    }
+
+    public void verificarEmprestimosExpirados() {
+        List<Emprestimo> emprestimos = emprestimoRepository.findAll();
+        for (Emprestimo emprestimo : emprestimos) {
+            if(emprestimo.isAtrasado()) {
+                Livro livro = emprestimo.getLivro();
+                livro.disponibilizar();
+
+                livroRepository.save(livro);
+                emprestimoRepository.save(emprestimo);
+            }
+        }
     }
 
 }

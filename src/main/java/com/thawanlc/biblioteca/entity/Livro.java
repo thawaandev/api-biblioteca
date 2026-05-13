@@ -28,5 +28,9 @@ public class Livro {
 
     private boolean disponivel;
 
+    public void disponibilizar() {
+        setDisponivel(true);
+    }   
+
 
 }
