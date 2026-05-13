@@ -12,7 +12,9 @@ import com.thawanlc.biblioteca.dto.LivroResponse;
 import com.thawanlc.biblioteca.service.LivroService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 
 
@@ -32,6 +34,12 @@ public class LivroController {
     @GetMapping
     public List<LivroResponse> listarLivros() {
         return livroService.listarLivros();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletarLivro(@PathVariable Long id) {
+        livroService.deletarLivroPorId(id);
+        return ResponseEntity.noContent().build();
     }
     
     

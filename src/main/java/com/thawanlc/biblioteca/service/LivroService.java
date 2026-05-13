@@ -7,8 +7,11 @@ import org.springframework.stereotype.Service;
 import com.thawanlc.biblioteca.dto.LivroRequest;
 import com.thawanlc.biblioteca.dto.LivroResponse;
 import com.thawanlc.biblioteca.entity.Livro;
+import com.thawanlc.biblioteca.exceptions.IsbnNaoEncontradoException;
+import com.thawanlc.biblioteca.exceptions.LivroNaoEncontradoException;
 import com.thawanlc.biblioteca.mapper.LivroMapper;
 import com.thawanlc.biblioteca.repository.LivroRepository;
+import com.thawanlc.biblioteca.service.OpenLibraryService.OpenLibraryResponse;
 
 @Service
 public class LivroService {
@@ -25,10 +28,15 @@ public class LivroService {
 
         boolean isbnValido = openLibraryService.isbnExiste(request.isbn());
         if(!isbnValido) {
-            throw new RuntimeException("ISBN inválido ou não encontrado na Open Library");
+            throw new IsbnNaoEncontradoException(request.isbn() + " não encontrado na Open Library");
         }
 
+        OpenLibraryResponse externalBook = openLibraryService.getBookDetails(request.isbn());
+    
         Livro livro = LivroMapper.toEntity(request);
+        livro.setTitulo(externalBook != null ? externalBook.getTitle() : "Titulo Desconecido");
+        livro.setAutor(externalBook != null ? openLibraryService.getAuthorName(externalBook) : "Autor desconhecido");
+         
         livroRepository.save(livro);
         return LivroMapper.toResponse(livro);
     }
@@ -40,6 +48,11 @@ public class LivroService {
             .toList();
     }
 
+    public void deletarLivroPorId(Long id) {
+        Livro livro = livroRepository.findById(id).orElseThrow(
+            () -> new LivroNaoEncontradoException("Livro não encontrado"));
+        livroRepository.delete(livro);
+    }
 
 
 }

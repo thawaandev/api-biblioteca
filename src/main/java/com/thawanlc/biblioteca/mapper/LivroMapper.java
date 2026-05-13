@@ -13,6 +13,7 @@ public class LivroMapper {
         return new LivroResponse(
             livro.getId(),
             livro.getTitulo(),
+            livro.getAutor(),
             livro.getIsbn(),
             livro.isDisponivel()
         );
@@ -20,7 +21,6 @@ public class LivroMapper {
 
     public static Livro toEntity(LivroRequest request) {
         Livro livro = new Livro();
-        livro.setTitulo(request.titulo());
         livro.setIsbn(request.isbn());
         livro.setDisponivel(true);
         return livro;

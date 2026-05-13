@@ -20,6 +20,7 @@ public class Livro {
     private Long id;
 
     private String titulo;
+    private String autor;
 
     @ISBN
     @Column(unique = true)
