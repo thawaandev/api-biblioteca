@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 public record EmprestimoResponse(
     Long id,
+    String usuarioName,
     String livroName,
     String isbn,
     LocalDateTime dataEmprestimo,

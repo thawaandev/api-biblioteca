@@ -2,6 +2,7 @@ package com.thawanlc.biblioteca.entity;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.thawanlc.biblioteca.entity.enums.TipoStatus;
 
@@ -11,6 +12,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,6 +29,12 @@ public class Emprestimo {
 
     @OneToOne
     private Livro livro;
+
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
+
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime dataEmprestimo;
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
@@ -39,8 +48,10 @@ public class Emprestimo {
     public boolean isAtrasado() {
         if(dataDevolucao == null) throw new RuntimeException("Data de devolução não definida");
         if(LocalDateTime.now().isAfter(dataDevolucao)) {
+            usuario.bloquear();
             setStatus(TipoStatus.ATRASADO);
             System.out.println("Empréstimo " + id + " está atrasado e foi cancelado.");
+            System.out.println("Usuário: " + usuario.getNome() + " está bloqueado de fazer emprestimos..");
             return true;
         }
         return false;

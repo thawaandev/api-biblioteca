@@ -12,6 +12,7 @@ public class EmprestimoMapper {
     public static EmprestimoResponse toResponse(Emprestimo emprestimo) {
         return new EmprestimoResponse(
             emprestimo.getId(),
+            emprestimo.getUsuario().getNome(),
             emprestimo.getLivro().getTitulo(),
             emprestimo.getLivro().getIsbn(),
             emprestimo.getDataEmprestimo(),

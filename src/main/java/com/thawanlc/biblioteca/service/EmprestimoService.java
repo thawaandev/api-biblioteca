@@ -9,11 +9,14 @@ import com.thawanlc.biblioteca.dto.EmprestimoRequest;
 import com.thawanlc.biblioteca.dto.EmprestimoResponse;
 import com.thawanlc.biblioteca.entity.Emprestimo;
 import com.thawanlc.biblioteca.entity.Livro;
+import com.thawanlc.biblioteca.entity.Usuario;
 import com.thawanlc.biblioteca.exceptions.LivroIndisponivelException;
 import com.thawanlc.biblioteca.exceptions.LivroNaoEncontradoException;
+import com.thawanlc.biblioteca.exceptions.UsuarioNaoEncontradoException;
 import com.thawanlc.biblioteca.mapper.EmprestimoMapper;
 import com.thawanlc.biblioteca.repository.EmprestimoRepository;
 import com.thawanlc.biblioteca.repository.LivroRepository;
+import com.thawanlc.biblioteca.repository.UsuarioRepository;
 
 import jakarta.transaction.Transactional;
 
@@ -22,16 +25,21 @@ public class EmprestimoService {
     
     private EmprestimoRepository emprestimoRepository;
     private LivroRepository livroRepository;
+    private UsuarioRepository usuarioRepository;
 
-    public EmprestimoService(EmprestimoRepository emprestimoRepository, LivroRepository livroRepository) {
+    public EmprestimoService(EmprestimoRepository emprestimoRepository, LivroRepository livroRepository, UsuarioRepository usuarioRepository) {
         this.emprestimoRepository = emprestimoRepository;
         this.livroRepository = livroRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
     @Transactional
     public EmprestimoResponse fazerEmprestimo(EmprestimoRequest request) {
         Livro livro = livroRepository.findById(request.livroId()).orElseThrow(
             () -> new LivroNaoEncontradoException("Livro não encontrado"));
+
+        Usuario usuario = usuarioRepository.findById(request.usuarioId()).orElseThrow(
+          () -> new UsuarioNaoEncontradoException("Usuário não Encontrado") );
 
         if(!livro.isDisponivel()) {
             throw new LivroIndisponivelException("Livro indisponível para empréstimo");
@@ -45,6 +53,7 @@ public class EmprestimoService {
         }
 
         emprestimo.setLivro(livro);
+        emprestimo.setUsuario(usuario);
         emprestimoRepository.save(emprestimo);
         livroRepository.save(livro);
         return EmprestimoMapper.toResponse(emprestimo);
