@@ -1,5 +1,6 @@
 package com.thawanlc.biblioteca.entity;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class Usuario {
     private Long id;
 
     private String nome;
-    private Double saldo = 0.0;
+    private BigDecimal saldo = BigDecimal.ZERO;
     private boolean bloqueado = false;
 
     @JsonManagedReference
@@ -48,9 +49,9 @@ public class Usuario {
     }
 
     public void multar() {
-        double valorMulta = 50.0;
+        BigDecimal valorMulta = BigDecimal.valueOf(50.0);
         if(this.bloqueado) {
-            this.saldo -= valorMulta;
+            this.saldo = this.saldo.subtract(valorMulta);
         }
     }
     
