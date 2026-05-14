@@ -12,6 +12,7 @@ import com.thawanlc.biblioteca.entity.Livro;
 import com.thawanlc.biblioteca.entity.Usuario;
 import com.thawanlc.biblioteca.exceptions.LivroIndisponivelException;
 import com.thawanlc.biblioteca.exceptions.LivroNaoEncontradoException;
+import com.thawanlc.biblioteca.exceptions.UsuarioBloqueadoException;
 import com.thawanlc.biblioteca.exceptions.UsuarioNaoEncontradoException;
 import com.thawanlc.biblioteca.mapper.EmprestimoMapper;
 import com.thawanlc.biblioteca.repository.EmprestimoRepository;
@@ -39,7 +40,11 @@ public class EmprestimoService {
             () -> new LivroNaoEncontradoException("Livro não encontrado"));
 
         Usuario usuario = usuarioRepository.findById(request.usuarioId()).orElseThrow(
-          () -> new UsuarioNaoEncontradoException("Usuário não Encontrado") );
+          () -> new UsuarioNaoEncontradoException("Usuário não Encontrado"));
+
+        if(usuario.isBloqueado()) {
+            throw new UsuarioBloqueadoException("Usuário Bloqueado não pode fazer empréstimos");
+        }
 
         if(!livro.isDisponivel()) {
             throw new LivroIndisponivelException("Livro indisponível para empréstimo");
@@ -81,10 +86,10 @@ public class EmprestimoService {
         List<Emprestimo> emprestimos = emprestimoRepository.findAll();
         for (Emprestimo emprestimo : emprestimos) {
             if(emprestimo.isAtrasado()) {
-                Livro livro = emprestimo.getLivro();
-                livro.disponibilizar();
-
-                livroRepository.save(livro);
+                Usuario usuario = emprestimo.getUsuario();
+                usuario.aplicarPenalidade();
+                System.out.println("Usuário["+usuario.getNome()+"] bloqueado e impedido de fazer empréstimos...");
+                usuarioRepository.save(usuario);
                 emprestimoRepository.save(emprestimo);
             }
         }

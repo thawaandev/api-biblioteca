@@ -11,7 +11,7 @@ public class EmprestimoScheduler {
 
     @Autowired private EmprestimoService emprestimoService;
 
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 24)
+    @Scheduled(fixedRate = 1000 * 60)
     public void verificarAtrasos() {
         emprestimoService.verificarEmprestimosExpirados();
         System.out.println("Verificando Livros atrasados.....");

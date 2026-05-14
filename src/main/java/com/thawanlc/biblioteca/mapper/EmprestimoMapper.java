@@ -24,7 +24,7 @@ public class EmprestimoMapper {
     public static Emprestimo toEntity(EmprestimoRequest request) {
         Emprestimo emprestimo = new Emprestimo();
         emprestimo.setDataEmprestimo(LocalDateTime.now());
-        emprestimo.setDataDevolucao(LocalDateTime.now().plusDays(7));
+        emprestimo.setDataDevolucao(LocalDateTime.now().plusMinutes(1));
         emprestimo.setStatus(TipoStatus.ALUGADO);
         return emprestimo;
     }

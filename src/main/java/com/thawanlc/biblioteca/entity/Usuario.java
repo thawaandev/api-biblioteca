@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,15 +26,32 @@ public class Usuario {
     private Long id;
 
     private String nome;
-    private boolean bloqueado;
+    private Double saldo = 0.0;
+    private boolean bloqueado = false;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "usuario")
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Emprestimo> emprestimos = new ArrayList<>();
 
 
     public void bloquear() {
-        setBloqueado(true);
+        this.bloqueado = true;
+    }
+
+    public void desbloquear() {
+        this.bloqueado = false;
+    }
+
+    public void aplicarPenalidade() {
+        bloquear();
+        multar();
+    }
+
+    public void multar() {
+        double valorMulta = 50.0;
+        if(this.bloqueado) {
+            this.saldo -= valorMulta;
+        }
     }
     
 
