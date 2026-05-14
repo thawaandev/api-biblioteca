@@ -79,6 +79,7 @@ public class EmprestimoService {
         Livro livro = emprestimo.getLivro();
         livro.setDisponivel(true);
         livroRepository.save(livro);
+        usuarioRepository.save(usuario);
         emprestimoRepository.delete(emprestimo);
         return EmprestimoMapper.toResponse(emprestimo);
     }

@@ -34,6 +34,7 @@ public class UsuarioService {
             () -> new UsuarioNaoEncontradoException("Usuário Inexistente")
         );
         usuario.tirarPenalidade();
+        usuarioRepository.save(usuario);
         return UsuarioMapper.toResponse(usuario);
     }
 
