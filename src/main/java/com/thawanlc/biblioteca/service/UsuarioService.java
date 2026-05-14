@@ -9,8 +9,11 @@ import org.springframework.stereotype.Service;
 import com.thawanlc.biblioteca.dto.UsuarioRequest;
 import com.thawanlc.biblioteca.dto.UsuarioResponse;
 import com.thawanlc.biblioteca.entity.Usuario;
+import com.thawanlc.biblioteca.exceptions.UsuarioNaoEncontradoException;
 import com.thawanlc.biblioteca.mapper.UsuarioMapper;
 import com.thawanlc.biblioteca.repository.UsuarioRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class UsuarioService {
@@ -23,7 +26,15 @@ public class UsuarioService {
         Usuario usuario = UsuarioMapper.toEntity(request);
         usuarioRepository.save(usuario);
         return UsuarioMapper.toResponse(usuario);
+    }
 
+    @Transactional
+    public UsuarioResponse pagarSaldoDevedor(Long usuarioId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElseThrow(
+            () -> new UsuarioNaoEncontradoException("Usuário Inexistente")
+        );
+        usuario.tirarPenalidade();
+        return UsuarioMapper.toResponse(usuario);
     }
 
     public List<UsuarioResponse> listarTodos() {

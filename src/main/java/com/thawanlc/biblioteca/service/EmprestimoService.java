@@ -46,6 +46,10 @@ public class EmprestimoService {
             throw new UsuarioBloqueadoException("Usuário Bloqueado não pode fazer empréstimos");
         }
 
+        if(usuario.isMultado()) {
+            throw new UsuarioBloqueadoException("Usuário tem um saldo pendente e por isso não pode fazer empréstimos");
+        }
+
         if(!livro.isDisponivel()) {
             throw new LivroIndisponivelException("Livro indisponível para empréstimo");
         }
@@ -69,6 +73,9 @@ public class EmprestimoService {
         Emprestimo emprestimo = emprestimoRepository.findById(emprestimoId).orElseThrow(
             () -> new RuntimeException("Empréstimo não encontrado"));
         
+        Usuario usuario = emprestimo.getUsuario();
+        usuario.desbloquear();
+
         Livro livro = emprestimo.getLivro();
         livro.setDisponivel(true);
         livroRepository.save(livro);

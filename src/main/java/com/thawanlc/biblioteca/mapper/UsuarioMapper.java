@@ -12,7 +12,9 @@ public class UsuarioMapper {
         return new UsuarioResponse(
             usuario.getId(),
             usuario.getNome(),
+            usuario.getSaldo(),
             usuario.isBloqueado(),
+            usuario.isMultado(),
             usuario.getEmprestimos()
                 .stream()
                 .map(EmprestimoMapper::toResponse)

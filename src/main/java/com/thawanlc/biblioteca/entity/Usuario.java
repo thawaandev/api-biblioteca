@@ -29,6 +29,7 @@ public class Usuario {
     private String nome;
     private BigDecimal saldo = BigDecimal.ZERO;
     private boolean bloqueado = false;
+    private boolean multado = false;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -48,9 +49,20 @@ public class Usuario {
         multar();
     }
 
+    public void tirarPenalidade() {
+        desbloquear();
+        pagamentoMulta();
+    }
+
+    public void pagamentoMulta() {
+        this.multado = false;
+        this.saldo = BigDecimal.ZERO;
+    }
+
     public void multar() {
         BigDecimal valorMulta = BigDecimal.valueOf(50.0);
         if(this.bloqueado) {
+            this.multado = true;
             this.saldo = this.saldo.subtract(valorMulta);
         }
     }
