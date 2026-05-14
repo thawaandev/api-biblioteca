@@ -36,7 +36,6 @@ public class LivroService {
         Livro livro = LivroMapper.toEntity(request);
         livro.setTitulo(externalBook != null ? externalBook.getTitle() : "Titulo Desconecido");
         livro.setAutor(externalBook != null ? openLibraryService.getAuthorName(externalBook) : "Autor desconhecido");
-         
         livroRepository.save(livro);
         return LivroMapper.toResponse(livro);
     }
@@ -51,7 +50,7 @@ public class LivroService {
     public void deletarLivroPorId(Long id) {
         Livro livro = livroRepository.findById(id).orElseThrow(
             () -> new LivroNaoEncontradoException("Livro não encontrado"));
-        livroRepository.delete(livro);
+        livro.setDisponivel(false);
     }
 
 

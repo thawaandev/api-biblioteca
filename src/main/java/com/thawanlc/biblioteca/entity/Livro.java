@@ -25,7 +25,6 @@ public class Livro {
     @ISBN
     @Column(unique = true)
     private String isbn;
-
     private boolean disponivel;
 
     public void disponibilizar() {
