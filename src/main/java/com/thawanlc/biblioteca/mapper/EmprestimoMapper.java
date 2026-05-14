@@ -15,6 +15,7 @@ public class EmprestimoMapper {
             emprestimo.getUsuario().getNome(),
             emprestimo.getLivro().getTitulo(),
             emprestimo.getLivro().getIsbn(),
+            emprestimo.getStatus(),
             emprestimo.getDataEmprestimo(),
             emprestimo.getDataDevolucao()
         );
